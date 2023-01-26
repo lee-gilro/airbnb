@@ -46,4 +46,4 @@ class PerkDetail(APIView):
     def delete(self, request , pk):
         perk = self.get_object(pk=pk)
         perk.delete()
-        return Response(HTTP_204_NO_CONTENT)
+        return Response(status = HTTP_204_NO_CONTENT)

@@ -12,6 +12,7 @@ class Room(CommonModel):
     name = models.CharField(max_length=180, default="")
     country = models.CharField(max_length=50, default="한국")
     city = models.CharField(max_length=80, default="서울")
+    address = models.CharField(max_length=150, default= "", null= True, blank= True)
     price = models.PositiveBigIntegerField()
     rooms = models.PositiveBigIntegerField()
     toilets = models.PositiveBigIntegerField()
@@ -19,20 +20,20 @@ class Room(CommonModel):
     pet_friendly = models.BooleanField(default=True,)
     kind = models.CharField(max_length=20, choices=RoomKindChoices.choices,)
     owner = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="rooms",)
-    amenities = models.ManyToManyField("rooms.Amenity", related_name= "rooms",)
+    amenities = models.ManyToManyField("Amenity", related_name= "rooms",)
     category = models.ForeignKey("categories.Category", on_delete= models.SET_NULL, blank=True, null=True, related_name= "rooms",)
 
     def __str__(self) -> str:
         return self.name
     
     def total_amenities(self):
-        return self.amenity.count()
+        return self.amenities.count()
 
     def rating(self):
         count =  (self.reviews.count())
 
         if count == 0:
-            return "No reviews"
+            return 0
         
         else:
             total_rating = 0
