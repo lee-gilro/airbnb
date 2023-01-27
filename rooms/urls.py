@@ -7,6 +7,7 @@ urlpatterns = [
     path("amenities/<int:pk>", views.AmenitiyDetail.as_view()),
     path("", views.Rooms.as_view()),
     path("<int:pk>", views.RoomDetail.as_view()),
-    path("<int:pk>/reviews", views.RoomReview.as_view()),
-    path("<int:pk>/amenities", views.RoomAmenity.as_view()),
+    path("<int:pk>/reviews", views.RoomReviews.as_view()),
+    path("<int:pk>/amenities", views.RoomAmenities.as_view()),
+    path("<int:pk>/photos", views.RoomPhotos.as_view()),
 ]
