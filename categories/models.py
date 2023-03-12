@@ -3,7 +3,7 @@ from common.models import CommonModel
 # Create your models here.
 
 class Category(CommonModel):
-    """Room or Experience Category"""
+   
 
     class CategoryKindChoices(models.TextChoices):
         ROOMS = "rooms", "Rooms"

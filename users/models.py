@@ -22,7 +22,7 @@ class User(AbstractUser):
     is_host = models.BooleanField(default=False)
     
     point = models.FloatField(default=0, verbose_name="Coin Locked")
-    avatar = models.ImageField(blank=True)
+    avatar = models.URLField(blank=True)
     gender = models.CharField(max_length=10, choices= GenderChoices.choices,)
  # type: ignore
     language = models.CharField(max_length=2, choices=LanguageChoices.choices,)

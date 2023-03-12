@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils import timezone
 from rest_framework.views import APIView
 from django.db import transaction
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -10,7 +11,8 @@ from categories.models import Category
 from .serializers import AmenitySerializer, RoomListSerializer, RoomDetailSerializer
 from reviews.serializers import ReviewSerializer
 from medias.serializers import PhotoSerializer
-
+from bookings.models import Booking
+from bookings.serializers import PublicBookingSerializer, CreateRoomBookingSerializer
 
 SAFE_METHODS = ('GET', 'HEAD', 'OPTIONS')
 
@@ -253,5 +255,40 @@ class RoomPhotos(APIView):
             photo = serializer.save(room=room)
             serializer = PhotoSerializer(photo)
             return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
+
+class RoomBookings(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except Room.DoesNotExist:
+            raise NotFound
+        
+    def get(self, request, pk):
+        room = self.get_object(pk=pk)
+        now = timezone.localtime(timezone.now()).date()
+        booking = Booking.objects.filter(
+            room=room,
+            kind=Booking.BookingKindChoices.ROOM,
+            check_in__gt=now,
+            )
+        serializer = PublicBookingSerializer(booking, many = True)
+        return Response(serializer.data)
+
+    def post(self, request, pk):
+        room = self.get_object(pk=pk)
+        serializer = CreateRoomBookingSerializer(data=request.data)
+        if serializer.is_valid():
+            booking = serializer.save(
+                room=room,
+                user=request.user,
+                kind=Booking.BookingKindChoices.ROOM,
+            )
+            return Response(PublicBookingSerializer(booking).data)
         else:
             return Response(serializer.errors)
